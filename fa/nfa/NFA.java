@@ -1,6 +1,6 @@
-package fa.dfa;
+package fa.nfa;
 
-import fa.NFAState;
+import fa.nfa.NFAState;
 import fa.nfa.NFAInterface;
 
 import java.util.*;
@@ -14,20 +14,20 @@ import java.util.Set;
  * @author Julia Melchert
  */
 public class NFA implements NFAInterface {
-    private AbstractSet<Character> alphabet;
-    private AbstractSet<NFAState> allStates;
-    private AbstractSet<String> allStateNames;
+    private HashSet<Character> alphabet;
+    private HashSet<NFAState> allStates;
+    private HashSet<String> allStateNames;
     private NFAState startState;
-    private AbstractSet<NFAState> finalStates;
+    private HashSet<NFAState> finalStates;
     // transitions are tracked in each individual NFAState
 
     // Constructor
-    public DFA() {
-        this.alphabet = new AbstractSet<Character>();
-        this.allStates = new AbstractSet<NFAState>();
-        this.allStateNames = new AbstractSet<String>();
+    public NFA() {
+        this.alphabet = new HashSet<Character>();
+        this.allStates = new HashSet<NFAState>();
+        this.allStateNames = new HashSet<String>();
         this.startState = null;
-        this.finalStates = new AbstractSet<NFAState>();
+        this.finalStates = new HashSet<NFAState>();
     }
 
     /**
@@ -53,7 +53,7 @@ public class NFA implements NFAInterface {
 	public boolean addState(String name) {
         // If the name can be added to the set, it is added
         if (this.allStateNames.add(name) == true) {
-            this.allStates.add(NFAState(name));
+            this.allStates.add(new NFAState(name));
             return true;
         }
 
@@ -111,7 +111,7 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public boolean isStart(String name) {
-        if (this.startState == name) {
+        if (this.startState.getName() == name) {
             return true;
         }
 
@@ -159,7 +159,7 @@ public class NFA implements NFAInterface {
         // Ensured valid inputs, so proceed with adding the transition(s)
 
         // Create set of NFAStates based on strings in toStates
-        AbstractSet<NFAState> destStates = new AbstractSet<NFAState>();
+        HashSet<NFAState> destStates = new HashSet<NFAState>();
         for (String stateName : toStates) {
             destStates.add(this.getState(stateName));
         }
@@ -173,7 +173,9 @@ public class NFA implements NFAInterface {
      * {@inheritDoc}
      */
     @Override
-	public Set<NFAState> getToState(NFAState from, char onSymb);
+	public Set<NFAState> getToState(NFAState from, char onSymb) {
+        return null;
+    }
 	
     /**
      * {@inheritDoc}
@@ -181,13 +183,16 @@ public class NFA implements NFAInterface {
     @Override
 	public Set<NFAState> eClosure(NFAState s) {
         // Uses depth-first search (DFS)
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public abstract boolean accepts(String s);
+	public boolean accepts(String s) {
+        return false;
+    }
 	
 
     /**
@@ -198,13 +203,15 @@ public class NFA implements NFAInterface {
         // NOTE: This method does not need to account for infinite loops from epsilon transitions
 
         // Uses breadth-first search (BFS)
-
+        return 0;
     }
 	
     /**
      * {@inheritDoc}
      */
     @Override
-	public boolean isDFA();
+	public boolean isDFA() {
+        return false;
+    }
 
 }

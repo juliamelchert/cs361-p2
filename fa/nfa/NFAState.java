@@ -1,6 +1,7 @@
 package fa.nfa;
 
 
+import java.util.*;
 import java.util.Set;
 
 import fa.State;
@@ -12,17 +13,22 @@ import fa.State;
  * @author Axel Murillo
  * @author Julia Melchert
  */
-public interface NFAState extends State {
+public class NFAState extends State implements Comparable<NFAState> {
 
-    public Map<Character, AbstractSet<NFAState>> transitions;
+    public String name;
+    public Map<Character, HashSet<NFAState>> transitions;
 
     /**
      *
      * @param name name for state
      */
     public NFAState(String name) {
-        super(name);
-        this.transitions = new Map<Character, AbstractSet<NFAState>>();
+        this.name = name;
+        this.transitions = new HashMap<Character, HashSet<NFAState>>();
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     /**
@@ -31,16 +37,16 @@ public interface NFAState extends State {
      * @return int for comparison of states, -1 if less than (less characters), 0 if equal, and 1 if greater than (more characters)
      */
     public int compareTo(NFAState state) {
-        return state.getName().compareTo(this.getName());
+         return state.getName().compareTo(this.getName());
     }
 
     /*
      * Assumes toStates and onSymb are valid
     */
-    public addTransition(AbstractSet<NFAState> toStates, char onSymb) {
+    public void addTransition(HashSet<NFAState> toStates, char onSymb) {
         // If a transition on onSymb already exists, add to its set of destination states
         if (this.transitions.containsKey(onSymb)) {
-            AbstractSet<NFAState> currentVal = this.transitions.get(onSymb);
+            HashSet<NFAState> currentVal = this.transitions.get(onSymb);
             currentVal.addAll(toStates);
             this.transitions.put(onSymb, currentVal);
         

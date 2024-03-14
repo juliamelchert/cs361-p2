@@ -1,7 +1,7 @@
 package fa;
 
 import java.util.Set;
-
+import fa.nfa.NFAState;
 
 public interface FAInterface {
 
