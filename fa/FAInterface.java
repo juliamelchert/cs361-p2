@@ -55,7 +55,7 @@ public interface FAInterface {
 	 * @param name of a state
 	 * @return state object or null
 	 */
-	public State getState(String name);
+	public NFAState getState(String name);
 	
 	
 	/**
@@ -66,7 +66,7 @@ public interface FAInterface {
 	public boolean isFinal(String name);
 	
 	/**
-	 * Determines if a state with name is final
+	 * Determines if a state with name is the starting state
 	 * @param name the name of the state
 	 * @return true if a state with that name exists and it is the start state
 	 */
