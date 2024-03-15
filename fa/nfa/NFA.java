@@ -5,8 +5,6 @@ import fa.nfa.NFAInterface;
 
 import java.util.*;
 
-import java.util.Set;
-
 /**
  * Represents a nondeterministic finite automaton (NFA) comprised of NFAState objects and transitions.
  * Manages the appropriate data for an NFA like the alphabet, states, start/final states, and transition table.
@@ -174,7 +172,12 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public Set<NFAState> getToState(NFAState from, char onSymb) {
-        return null;
+        Set<NFAState> result = new HashSet<>();
+        if(from.transitions.containsKey(onSymb)) {
+            result.addAll(from.transitions.get(onSymb));
+        }
+        result.addAll(eClosure(from));
+        return result;
     }
 	
     /**
@@ -183,7 +186,26 @@ public class NFA implements NFAInterface {
     @Override
 	public Set<NFAState> eClosure(NFAState s) {
         // Uses depth-first search (DFS)
-        return null;
+        Set<NFAState> closure = new HashSet<>();
+        Stack<NFAState> stack = new Stack<>();
+        stack.push(s);
+        closure.add(s);
+        
+        while (!stack.isEmpty()) {
+            NFAState current = stack.pop();
+            //Check epsilon transitions
+            if (current.transitions.containsKey('e')) {
+                for (NFAState nextState : current.transitions.get('e')) {
+                    if (!closure.contains(nextState)) {
+                        stack.push(nextState);
+                        closure.add(nextState);
+                    }
+
+                }
+            }
+        }
+        
+        return closure;
     }
 
     /**
@@ -191,7 +213,28 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public boolean accepts(String s) {
+        Set<NFAState> currentStates = eClosure(startState);
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            Set<NFAState> nextStates = new HashSet<>();
+            for (NFAState state : currentStates) {
+                if (state.transitions.containsKey(c)) {
+                    for (NFAState targetState : state.transitions.get(c)) {
+                        nextStates.addAll(eClosure(targetState));
+                    }
+                }
+            }
+            currentStates = nextStates;
+        }
+        
+        //check if the current state is the final/accepting state
+        for (NFAState state : currentStates) {
+            if (finalStates.contains(state)) {
+                return true;
+            }
+        }
         return false;
+
     }
 	
 
@@ -203,7 +246,42 @@ public class NFA implements NFAInterface {
         // NOTE: This method does not need to account for infinite loops from epsilon transitions
 
         // Uses breadth-first search (BFS)
-        return 0;
+        //Track how many times a state has been visited
+        Map<NFAState, Integer> res = new HashMap<>();
+    
+        //Initial state start
+        Set<NFAState> startStates = eClosure(startState);
+
+        for (NFAState st : startStates) {
+            res.put(st, 1); // Each state in the start's eClosure is reachable once at the beginning
+        }
+
+        //go through characters in the string
+        for (char c : s.toCharArray()) {
+            Map<NFAState, Integer> newStateCopies = new HashMap<>();
+        
+            for (Map.Entry<NFAState, Integer> entry : res.entrySet()) {
+                NFAState currentState = entry.getKey();
+                int copies = entry.getValue();
+            
+                //Add target states to the new map if theres a transition
+                if (currentState.transitions.containsKey(c)) {
+                    for (NFAState nextState : currentState.transitions.get(c)) {
+                        //update the count and compute eClosure for the nextState
+                        Set<NFAState> closure = eClosure(nextState);
+                        for (NFAState closureState : closure) {
+                            newStateCopies.put(closureState, newStateCopies.getOrDefault(closureState, 0) + copies);
+                        }
+                    }
+                }
+            }
+        
+            //update for next characters
+            res = newStateCopies;
+        }
+
+        //max copies = highest value 
+        return res.values().stream().max(Integer::compare).orElse(0);
     }
 	
     /**
@@ -211,7 +289,19 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public boolean isDFA() {
-        return false;
+        for (NFAState state : allStates) {
+            for (char symbol : alphabet) {
+                if (state.transitions.containsKey(symbol)) {
+                    if (state.transitions.get(symbol).size() > 1) return false;
+                }
+            }
+
+            //Check for epsilon
+            if (state.transitions.containsKey('e')) {
+                if (!state.transitions.get('e').isEmpty()) return false;
+            }
+        }
+        return true;
     }
 
 }
