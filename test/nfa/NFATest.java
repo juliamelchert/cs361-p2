@@ -84,12 +84,14 @@ public class NFATest {
 		assertFalse(nfa.accepts("00"));
 		assertTrue(nfa.accepts("101"));
 		assertFalse(nfa.accepts("e"));
+		assertTrue(nfa.accepts("011"));
 		System.out.println("nfa1 accepts done");
 	}
 	
 	@Test
 	public void test1_6() {
 		NFA nfa = nfa1();
+		assertEquals(nfa.maxCopies("011"), 2);
 		assertEquals(nfa.maxCopies("0"), 1);
 		assertEquals(nfa.maxCopies("1"), 2);
 		assertEquals(nfa.maxCopies("00"), 1);
