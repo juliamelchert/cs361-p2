@@ -213,28 +213,35 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public boolean accepts(String s) {
+        // Performs BFS
+
         Set<NFAState> currentStates = eClosure(startState);
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             Set<NFAState> nextStates = new HashSet<>();
+
+            // For every starting state, check if there's a transition for the current character 
             for (NFAState state : currentStates) {
                 if (state.transitions.containsKey(c)) {
+                    // If there is a transition on the current character, add all possible destinations to a set
                     for (NFAState targetState : state.transitions.get(c)) {
                         nextStates.addAll(eClosure(targetState));
                     }
                 }
             }
+
+            // Update the set of states we still need to look through with the last iteration's destinations
             currentStates = nextStates;
         }
         
-        //check if the current state is the final/accepting state
+        // Return true if at least one of the destination states is a final state 
         for (NFAState state : currentStates) {
             if (finalStates.contains(state)) {
                 return true;
             }
         }
-        return false;
 
+        return false;
     }
 	
 
@@ -243,45 +250,38 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public int maxCopies(String s) {
-        // NOTE: This method does not need to account for infinite loops from epsilon transitions
+        // Follows similar process as accepts, but keeps track of max copies while performing BFS
 
-        // Uses breadth-first search (BFS)
-        //Track how many times a state has been visited
-        Map<NFAState, Integer> res = new HashMap<>();
-    
-        //Initial state start
-        Set<NFAState> startStates = eClosure(startState);
+        // Find all possible start states by using the eClosure of the start state
+        Set<NFAState> currentStates = eClosure(startState);
 
-        for (NFAState st : startStates) {
-            res.put(st, 1); // Each state in the start's eClosure is reachable once at the beginning
-        }
+        // Initialize variable to hold the max number of copies through all iterations
+        int copyMax = currentStates.size();
 
-        //go through characters in the string
-        for (char c : s.toCharArray()) {
-            Map<NFAState, Integer> newStateCopies = new HashMap<>();
-        
-            for (Map.Entry<NFAState, Integer> entry : res.entrySet()) {
-                NFAState currentState = entry.getKey();
-                int copies = entry.getValue();
-            
-                //Add target states to the new map if theres a transition
-                if (currentState.transitions.containsKey(c)) {
-                    for (NFAState nextState : currentState.transitions.get(c)) {
-                        //update the count and compute eClosure for the nextState
-                        Set<NFAState> closure = eClosure(nextState);
-                        for (NFAState closureState : closure) {
-                            newStateCopies.put(closureState, newStateCopies.getOrDefault(closureState, 0) + copies);
-                        }
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            Set<NFAState> nextStates = new HashSet<>();
+
+            // For every starting state, check if there's a transition for the current character 
+            for (NFAState state : currentStates) {
+                if (state.transitions.containsKey(c)) {
+                    // If there is a transition on the current character, add all possible destinations to a set
+                    for (NFAState targetState : state.transitions.get(c)) {
+                        nextStates.addAll(eClosure(targetState));
+                    }
+
+                    // Update the max copy tracker if more states can be reached than before
+                    if (nextStates.size() > copyMax) {
+                        copyMax = nextStates.size();
                     }
                 }
             }
-        
-            //update for next characters
-            res = newStateCopies;
+
+            // Update the set of states we still need to look through with the last iteration's destinations
+            currentStates = nextStates;
         }
 
-        //max copies = highest value 
-        return res.values().stream().max(Integer::compare).orElse(0);
+        return copyMax;
     }
 	
     /**
