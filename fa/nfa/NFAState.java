@@ -18,7 +18,7 @@ public class NFAState extends State implements Comparable<NFAState> {
     public Map<Character, HashSet<NFAState>> transitions;
 
     /**
-     *
+     * Constructor for an NFAState object
      * @param name name for state
      */
     public NFAState(String name) {
@@ -40,7 +40,12 @@ public class NFAState extends State implements Comparable<NFAState> {
     }
 
     /*
-     * Assumes toStates and onSymb are valid
+     * Adds all the transitions given in toStates to update this object's transitions map.
+     * This is used internally in NFA.java's addTransition() method, so it assumes toStates 
+     * and onSymb are valid (since they're checked in NFA.java's addTransition() before this 
+     * is called).
+	 * @param toStates is the set of NFAStates where the transitions end
+	 * @param onSymb is the symbol from the NFA's alphabet that the transition is taken on
     */
     public void addTransition(HashSet<NFAState> toStates, char onSymb) {
         // If a transition on onSymb already exists, add to its set of destination states
