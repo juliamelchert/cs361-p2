@@ -2,7 +2,6 @@ package fa.nfa;
 
 
 import java.util.*;
-import java.util.Set;
 
 import fa.State;
 
