@@ -109,6 +109,10 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public boolean isStart(String name) {
+        if (name == null || this.startState == null) {
+            return false;
+        }
+
         if (this.startState.getName() == name) {
             return true;
         }
@@ -176,7 +180,8 @@ public class NFA implements NFAInterface {
         if(from.transitions.containsKey(onSymb)) {
             result.addAll(from.transitions.get(onSymb));
         }
-        result.addAll(eClosure(from));
+
+        result.addAll(eClosure(from)); 
         return result;
     }
 	
@@ -188,6 +193,9 @@ public class NFA implements NFAInterface {
         // Uses depth-first search (DFS)
         Set<NFAState> closure = new HashSet<>();
         Stack<NFAState> stack = new Stack<>();
+        if (!this.allStates.contains(s)) {
+            return closure;
+        }
         stack.push(s);
         closure.add(s);
         
@@ -289,6 +297,10 @@ public class NFA implements NFAInterface {
      */
     @Override
 	public boolean isDFA() {
+        if (allStates.isEmpty()) {
+            return false;
+        }
+
         for (NFAState state : allStates) {
             for (char symbol : alphabet) {
                 if (state.transitions.containsKey(symbol)) {
