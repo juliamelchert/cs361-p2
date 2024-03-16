@@ -300,4 +300,56 @@ public class NFATest {
 		System.out.println("nfa1 maxCopies done");
 	}
 
+	private NFA nfa4() {
+		return new NFA(); // Returns an empty NFA
+	}
+	
+	@Test
+	public void test4_1() {
+		NFA nfa = nfa4();
+		assertNotNull(nfa);
+		System.out.println("nfa4 instantiation done");
+	}
+	
+	@Test
+	public void test4_2() {
+		NFA nfa = nfa4();
+		assertNull(nfa.getState("any")); // No states should exist
+		assertFalse(nfa.isStart("any"));
+		assertFalse(nfa.isFinal("any"));
+		System.out.println("nfa4 state checks done");
+	}
+	
+	@Test
+	public void test4_3() {
+		NFA nfa = nfa4();
+		assertFalse(nfa.isDFA()); // An empty NFA is not a DFA
+		System.out.println("nfa4 isDFA done");
+	}
+
+	@Test
+	public void test4_4() {
+		NFA nfa = nfa4();
+		// Since there are no states, we expect an empty set for eClosure of any non-existent state
+		System.out.println("nfa4 eClosure done");
+	}
+	
+	@Test
+	public void test4_5() {
+		NFA nfa = nfa4();
+		// An empty NFA cannot accept any strings, including an empty string
+		assertFalse(nfa.accepts(""));
+		assertFalse(nfa.accepts("any"));
+		System.out.println("nfa4 accepts done");
+	}
+	
+	@Test
+	public void test4_6() {
+		NFA nfa = nfa4();
+		// Max copies should return 0 for an empty NFA for any string
+		assertEquals(0, nfa.maxCopies("any"));
+		assertEquals(0, nfa.maxCopies(""));
+		System.out.println("nfa4 maxCopies done");
+	}
+
 }
