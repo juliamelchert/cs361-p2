@@ -47,3 +47,4 @@ If you want to make an NFA of your own, follow the structure of NFATest.java to 
 * https://www.tutorialspoint.com/set-vs-hashset-vs-treeset-in-java
 * https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html
 * https://stackoverflow.com/questions/12455737/how-to-iterate-over-a-set-hashset-without-an-iterator
+* https://www.geeksforgeeks.org/substring-in-java/
